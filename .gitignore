@@ -1,0 +1,39 @@
+# Dependencies and generated package archives
+node_modules/
+*.tgz
+
+# Logs and local runtime files
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.pid
+nul
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Test and build output
+coverage/
+.vitest/
+*.tsbuildinfo
+dist/
+build/
+
+# Operating-system files
+.DS_Store
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# IDE files
+.idea/
+.vscode/
+*.iml
+*.suo
+*.user
+*.swp
+*.swo

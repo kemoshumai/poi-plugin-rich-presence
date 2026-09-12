@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "CommonJS",
+    "moduleResolution": "Node",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "jsx": "react-jsx",
+    "baseUrl": ".",
+    "types": ["node", "react"],
+    "paths": {
+      "views/create-store": ["types/views/create-store.d.ts"],
+      "views/env": ["types/views/env.d.ts"],
+      "views/*": ["types/views/*"]
+    }
+  },
+  "include": ["src", "types"]
+}

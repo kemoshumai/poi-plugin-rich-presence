@@ -1,0 +1,62 @@
+{
+  "name": "poi-plugin-rich-presence",
+  "version": "0.1.0",
+  "description": "Discord Rich Presence integration for poi.",
+  "author": "Kemoshumai",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kemoshumai/poi-plugin-rich-presence.git"
+  },
+  "homepage": "https://github.com/kemoshumai/poi-plugin-rich-presence#readme",
+  "bugs": {
+    "url": "https://github.com/kemoshumai/poi-plugin-rich-presence/issues"
+  },
+  "main": "index.js",
+  "files": [
+    "index.js",
+    "package.json",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "esbuild src/index.tsx --bundle --platform=node --format=cjs --target=es2022 --outfile=index.js --external:react --external:views/* --external:lib/* --external:kcsapi/*",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "lint": "eslint src --ext .ts,.tsx --max-warnings=0",
+    "pack-smoke": "node scripts/pack-smoke.cjs",
+    "validate": "npm run typecheck && npm run lint && npm test && npm run build && npm run pack-smoke"
+  },
+  "engines": {
+    "poi": "12.0.1"
+  },
+  "peerDependencies": {
+    "react": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.0",
+    "@types/react": "^18.3.12",
+    "@typescript-eslint/eslint-plugin": "^8.30.0",
+    "@typescript-eslint/parser": "^8.30.0",
+    "esbuild": "^0.25.0",
+    "eslint": "^9.22.0",
+    "react": "^18.3.1",
+    "typescript": "^5.8.2",
+    "vite": "^7.3.6",
+    "vitest": "^4.1.11"
+  },
+  "poiPlugin": {
+    "title": "Discord Rich Presence",
+    "description": "poi の状態を Discord の Rich Presence に表示するプラグインです。",
+    "icon": [
+      "fab",
+      "discord"
+    ],
+    "priority": 2,
+    "earliestCompatibleMain": "12.0.1",
+    "lastApiVer": "0.1.0",
+    "apiVer": {
+      "12.0.1": "0.1.0"
+    }
+  },
+  "license": "MIT"
+}
