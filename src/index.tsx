@@ -9,6 +9,7 @@ import { buildActivity, initialPresenceState, reduceResponse, type PresenceState
 const configPath = {
   enabled: 'plugin.rich-presence.discord.enabled',
   clientId: 'plugin.rich-presence.discord.clientId',
+  displayName: 'plugin.rich-presence.discord.displayName',
   largeImage: 'plugin.rich-presence.discord.largeImage',
   smallImage: 'plugin.rich-presence.discord.smallImage',
   showMap: 'plugin.rich-presence.discord.showMap',
@@ -84,6 +85,7 @@ const activityForCurrentState = (): RichActivity | null => {
   if (!getConfig(configPath.enabled, true)) return null
   if (getConfigError()) return null
   return buildActivity(current, sessionStartedAt, {
+    name: getText(configPath.displayName, 'poi') || 'poi',
     showMap: getConfig(configPath.showMap, true),
     largeImage: getText(configPath.largeImage),
     smallImage: getText(configPath.smallImage),
@@ -192,15 +194,15 @@ export const pluginWillUnload = (): void => {
   current = { ...initialPresenceState }
 }
 
-const TextSetting = ({ path, label }: { path: string; label: string }): React.ReactElement => {
-  const [value, setValue] = useState(getConfig(path, ''))
+const TextSetting = ({ path, label, defaultValue = '' }: { path: string; label: string; defaultValue?: string }): React.ReactElement => {
+  const [value, setValue] = useState(getConfig(path, defaultValue))
   useEffect(() => {
-    const listener = (): void => setValue(getConfig(path, ''))
+    const listener = (): void => setValue(getConfig(path, defaultValue))
     window.addEventListener('plugin.rich-presence.config-changed', listener)
     return () => window.removeEventListener('plugin.rich-presence.config-changed', listener)
-  }, [path])
+  }, [defaultValue, path])
   const invalidClientId = path === configPath.clientId && value.trim() !== '' && !isValidClientId(value.trim())
-  const invalidAsset = path !== configPath.clientId && value.trim() !== '' && !isAssetKey(value.trim())
+  const invalidAsset = (path === configPath.largeImage || path === configPath.smallImage) && value.trim() !== '' && !isAssetKey(value.trim())
   return (
     <label style={{ display: 'block', marginBottom: 8 }}>
       {label}<br />
@@ -243,10 +245,11 @@ export const settingsClass = (): React.ReactElement => (
   <div>
     <Checkbox path={configPath.enabled} label="Discord Rich Presence を有効化" defaultValue={true} />
     <TextSetting path={configPath.clientId} label="Application ID / Client ID（17〜20桁の数字）" />
+    <TextSetting path={configPath.displayName} label="アプリ名（デフォルト: poi）" defaultValue="poi" />
     <TextSetting path={configPath.largeImage} label="大きい画像の asset key（任意）" />
     <TextSetting path={configPath.smallImage} label="小さい画像の asset key（任意）" />
     <Checkbox path={configPath.showMap} label="海域名を表示する" defaultValue={true} />
-    <p style={{ marginTop: 12 }}>Discord Developer Portal の Application 名が Discord 上の表示名になります。このプラグインは details/state に母港・出撃・戦闘・海域を設定します。Discord デスクトップ版が必要です。Client Secret は入力しません。</p>
+    <p style={{ marginTop: 12 }}>アプリ名は保存時（入力欄からフォーカスを外した時）に実行中の Presence へ反映します。ただし Discord RPC の仕様・クライアントによっては Developer Portal の Application 名が優先表示されます。このプラグインは details/state に母港・出撃・戦闘・海域を設定します。Discord デスクトップ版が必要です。Client Secret は入力しません。</p>
     <RpcDiagnostic />
   </div>
 )

@@ -24,11 +24,12 @@ describe('presence state and activity', () => {
     const practice = reduceResponse(initialPresenceState, '/kcsapi/api_req_practice/battle', {})
     expect(practice.practice).toBe(true)
     const activity = buildActivity({ sortie: true, battle: false, map: '海域 1-1', practice: false }, 1700000000123, {
+      name: '艦これ',
       showMap: true,
       largeImage: '',
       smallImage: '',
     })
-    expect(activity).toMatchObject({ name: 'poi', details: '出撃中', state: '海域 1-1', timestamps: { start: 1700000000 } })
-    expect(buildActivity(initialPresenceState, 1700000000123, { showMap: true, largeImage: '', smallImage: '' }).state).toBeUndefined()
+    expect(activity).toMatchObject({ name: '艦これ', details: '出撃中', state: '海域 1-1', timestamps: { start: 1700000000 } })
+    expect(buildActivity(initialPresenceState, 1700000000123, { name: 'poi', showMap: true, largeImage: '', smallImage: '' }).state).toBeUndefined()
   })
 })

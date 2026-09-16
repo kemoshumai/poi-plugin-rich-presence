@@ -39,6 +39,7 @@ export const reduceResponse = (state: PresenceState, path: string, body: Record<
 }
 
 export interface ActivityOptions {
+  name: string
   showMap: boolean
   largeImage: string
   smallImage: string
@@ -47,7 +48,7 @@ export interface ActivityOptions {
 export const buildActivity = (state: PresenceState, sessionStartedAt: number, options: ActivityOptions): RichActivity => {
   const activity: RichActivity = {
     type: 0,
-    name: 'poi',
+    name: options.name,
     details: state.battle ? '戦闘中' : state.sortie ? '出撃中' : '母港',
     state: state.sortie ? (options.showMap && state.map ? state.map : '艦隊運用中') : undefined,
     timestamps: { start: Math.floor(sessionStartedAt / 1000) },
@@ -57,7 +58,7 @@ export const buildActivity = (state: PresenceState, sessionStartedAt: number, op
     activity.assets = {}
     if (options.largeImage) {
       activity.assets.large_image = options.largeImage
-      activity.assets.large_text = 'poi'
+      activity.assets.large_text = options.name
     }
     if (options.smallImage) {
       activity.assets.small_image = options.smallImage

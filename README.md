@@ -11,25 +11,27 @@ poi のプラグイン管理画面で `poi-plugin-rich-presence` を検索し、
 1. [Discord Developer Portal](https://discord.com/developers/applications) で Discord Application を作成する。
 2. Application の **General Information** にある **Application ID** をコピーする。
 3. poi の設定画面で Application ID を **Client ID** に入力する。
-4. 画像を表示する場合は、Discord の **Rich Presence > Art Assets** に登録した画像の asset key/name を入力する。asset key は英数字、`_`、`-` の128文字以内。
-5. Discord デスクトップ版を起動する。
+4. **アプリ名**を必要に応じて変更する（デフォルトは `poi`）。入力欄からフォーカスを外して保存されると、実行中の Presence へ即時反映される。
+5. 画像を表示する場合は、Discord の **Rich Presence > Art Assets** に登録した画像の asset key/name を入力する。asset key は英数字、`_`、`-` の128文字以内。
+6. Discord デスクトップ版を起動する。
 
-Client Secret、画像 URL、画像ファイル名は入力しない。Discord 上の Application 名は Developer Portal で設定した Application 名になる。
+Client Secret、画像 URL、画像ファイル名は入力しない。RPC payload の `activity.name` には設定したアプリ名を送信する。ただし Discord RPC では Developer Portal の Application 名が表示に使われる場合があり、`activity.name` による表示名の上書きは保証されない。確実に表示名を変更するには Developer Portal の Application 名も変更する。
 
 ## 表示内容
 
+- name: 設定したアプリ名（デフォルト `poi`。Discord クライアント上での上書き表示は保証されない）
 - details: `母港`、`出撃中`、`戦闘中`
 - state: 出撃中に海域名の表示が有効で取得できる場合は `海域 x-y`、それ以外の出撃中は `艦隊運用中`。母港と演習では送信しない
 - timestamp: プラグインの読み込み時刻
 - assets: 設定した asset key（任意）
 
-Discord RPC へ送る情報は、Client ID、プロセス ID、details/state、タイムスタンプ、設定した asset key。艦隊名、艦娘名、司令部情報、ゲーム API の生データは送信しない。
+Discord RPC へ送る情報は、Client ID、プロセス ID、設定したアプリ名、details/state、タイムスタンプ、設定した asset key。艦隊名、艦娘名、司令部情報、ゲーム API の生データは送信しない。
 
 海域名表示は設定画面の **海域名を表示する** で切り替えられる。ゲームの通常出撃・連合艦隊出撃・夜戦などの戦闘 API を検出して `戦闘中` を表示する。帰港・戦果画面では戦闘表示を解除する。
 
 ## 設定の移行
 
-設定キーは `plugin.rich-presence.discord.*`。旧版の `plugin.rich-presence.*` が残っている場合、プラグイン読み込み時に新しいキーへ一度だけコピーする。新しいキーが設定済みの項目は上書きしない。移行後も旧キーは削除しないため、不要なら poi の設定から削除する。
+設定キーは `plugin.rich-presence.discord.*`（アプリ名は `plugin.rich-presence.discord.displayName`）。旧版の `plugin.rich-presence.*` が残っている場合、プラグイン読み込み時に新しいキーへ一度だけコピーする。新しいキーが設定済みの項目は上書きしない。移行後も旧キーは削除しないため、不要なら poi の設定から削除する。
 
 ## トラブルシューティング
 

@@ -1,6 +1,6 @@
 {
   "name": "poi-plugin-rich-presence",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Discord Rich Presence integration for poi.",
   "author": "Kemoshumai",
   "repository": {

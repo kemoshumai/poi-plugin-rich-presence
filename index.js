@@ -391,7 +391,7 @@ var reduceResponse = (state, path2, body, postBody = {}) => {
 var buildActivity = (state, sessionStartedAt2, options) => {
   const activity = {
     type: 0,
-    name: "poi",
+    name: options.name,
     details: state.battle ? "\u6226\u95D8\u4E2D" : state.sortie ? "\u51FA\u6483\u4E2D" : "\u6BCD\u6E2F",
     state: state.sortie ? options.showMap && state.map ? state.map : "\u8266\u968A\u904B\u7528\u4E2D" : void 0,
     timestamps: { start: Math.floor(sessionStartedAt2 / 1e3) },
@@ -401,7 +401,7 @@ var buildActivity = (state, sessionStartedAt2, options) => {
     activity.assets = {};
     if (options.largeImage) {
       activity.assets.large_image = options.largeImage;
-      activity.assets.large_text = "poi";
+      activity.assets.large_text = options.name;
     }
     if (options.smallImage) {
       activity.assets.small_image = options.smallImage;
@@ -416,6 +416,7 @@ var import_jsx_runtime = require("react/jsx-runtime");
 var configPath = {
   enabled: "plugin.rich-presence.discord.enabled",
   clientId: "plugin.rich-presence.discord.clientId",
+  displayName: "plugin.rich-presence.discord.displayName",
   largeImage: "plugin.rich-presence.discord.largeImage",
   smallImage: "plugin.rich-presence.discord.smallImage",
   showMap: "plugin.rich-presence.discord.showMap"
@@ -479,6 +480,7 @@ var activityForCurrentState = () => {
   if (!getConfig(configPath.enabled, true)) return null;
   if (getConfigError()) return null;
   return buildActivity(current, sessionStartedAt, {
+    name: getText(configPath.displayName, "poi") || "poi",
     showMap: getConfig(configPath.showMap, true),
     largeImage: getText(configPath.largeImage),
     smallImage: getText(configPath.smallImage)
@@ -582,15 +584,15 @@ var pluginWillUnload = () => {
   sessionStartedAt = 0;
   current = { ...initialPresenceState };
 };
-var TextSetting = ({ path: path2, label }) => {
-  const [value, setValue] = (0, import_react.useState)(getConfig(path2, ""));
+var TextSetting = ({ path: path2, label, defaultValue = "" }) => {
+  const [value, setValue] = (0, import_react.useState)(getConfig(path2, defaultValue));
   (0, import_react.useEffect)(() => {
-    const listener = () => setValue(getConfig(path2, ""));
+    const listener = () => setValue(getConfig(path2, defaultValue));
     window.addEventListener("plugin.rich-presence.config-changed", listener);
     return () => window.removeEventListener("plugin.rich-presence.config-changed", listener);
-  }, [path2]);
+  }, [defaultValue, path2]);
   const invalidClientId = path2 === configPath.clientId && value.trim() !== "" && !isValidClientId(value.trim());
-  const invalidAsset = path2 !== configPath.clientId && value.trim() !== "" && !isAssetKey(value.trim());
+  const invalidAsset = (path2 === configPath.largeImage || path2 === configPath.smallImage) && value.trim() !== "" && !isAssetKey(value.trim());
   return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", { style: { display: "block", marginBottom: 8 }, children: [
     label,
     /* @__PURE__ */ (0, import_jsx_runtime.jsx)("br", {}),
@@ -634,10 +636,11 @@ var RpcDiagnostic = () => {
 var settingsClass = () => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [
   /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Checkbox, { path: configPath.enabled, label: "Discord Rich Presence \u3092\u6709\u52B9\u5316", defaultValue: true }),
   /* @__PURE__ */ (0, import_jsx_runtime.jsx)(TextSetting, { path: configPath.clientId, label: "Application ID / Client ID\uFF0817\u301C20\u6841\u306E\u6570\u5B57\uFF09" }),
+  /* @__PURE__ */ (0, import_jsx_runtime.jsx)(TextSetting, { path: configPath.displayName, label: "\u30A2\u30D7\u30EA\u540D\uFF08\u30C7\u30D5\u30A9\u30EB\u30C8: poi\uFF09", defaultValue: "poi" }),
   /* @__PURE__ */ (0, import_jsx_runtime.jsx)(TextSetting, { path: configPath.largeImage, label: "\u5927\u304D\u3044\u753B\u50CF\u306E asset key\uFF08\u4EFB\u610F\uFF09" }),
   /* @__PURE__ */ (0, import_jsx_runtime.jsx)(TextSetting, { path: configPath.smallImage, label: "\u5C0F\u3055\u3044\u753B\u50CF\u306E asset key\uFF08\u4EFB\u610F\uFF09" }),
   /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Checkbox, { path: configPath.showMap, label: "\u6D77\u57DF\u540D\u3092\u8868\u793A\u3059\u308B", defaultValue: true }),
-  /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { marginTop: 12 }, children: "Discord Developer Portal \u306E Application \u540D\u304C Discord \u4E0A\u306E\u8868\u793A\u540D\u306B\u306A\u308A\u307E\u3059\u3002\u3053\u306E\u30D7\u30E9\u30B0\u30A4\u30F3\u306F details/state \u306B\u6BCD\u6E2F\u30FB\u51FA\u6483\u30FB\u6226\u95D8\u30FB\u6D77\u57DF\u3092\u8A2D\u5B9A\u3057\u307E\u3059\u3002Discord \u30C7\u30B9\u30AF\u30C8\u30C3\u30D7\u7248\u304C\u5FC5\u8981\u3067\u3059\u3002Client Secret \u306F\u5165\u529B\u3057\u307E\u305B\u3093\u3002" }),
+  /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { marginTop: 12 }, children: "\u30A2\u30D7\u30EA\u540D\u306F\u4FDD\u5B58\u6642\uFF08\u5165\u529B\u6B04\u304B\u3089\u30D5\u30A9\u30FC\u30AB\u30B9\u3092\u5916\u3057\u305F\u6642\uFF09\u306B\u5B9F\u884C\u4E2D\u306E Presence \u3078\u53CD\u6620\u3057\u307E\u3059\u3002\u305F\u3060\u3057 Discord RPC \u306E\u4ED5\u69D8\u30FB\u30AF\u30E9\u30A4\u30A2\u30F3\u30C8\u306B\u3088\u3063\u3066\u306F Developer Portal \u306E Application \u540D\u304C\u512A\u5148\u8868\u793A\u3055\u308C\u307E\u3059\u3002\u3053\u306E\u30D7\u30E9\u30B0\u30A4\u30F3\u306F details/state \u306B\u6BCD\u6E2F\u30FB\u51FA\u6483\u30FB\u6226\u95D8\u30FB\u6D77\u57DF\u3092\u8A2D\u5B9A\u3057\u307E\u3059\u3002Discord \u30C7\u30B9\u30AF\u30C8\u30C3\u30D7\u7248\u304C\u5FC5\u8981\u3067\u3059\u3002Client Secret \u306F\u5165\u529B\u3057\u307E\u305B\u3093\u3002" }),
   /* @__PURE__ */ (0, import_jsx_runtime.jsx)(RpcDiagnostic, {})
 ] });
 // Annotate the CommonJS export names for ESM import in node:
