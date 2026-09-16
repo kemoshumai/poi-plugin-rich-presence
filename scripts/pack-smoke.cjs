@@ -27,6 +27,14 @@ try {
   const extractDir = path.join(tempDir, 'extracted')
   extractTarGz(archive, extractDir)
 
+  const sourcePackage = JSON.parse(fs.readFileSync(path.join(projectDir, 'package.json'), 'utf8'))
+  const packedPackage = JSON.parse(fs.readFileSync(path.join(extractDir, 'package', 'package.json'), 'utf8'))
+  assert.equal(packedPackage.version, sourcePackage.version)
+  assert.equal(packedPackage.version, '0.1.2')
+  assert.equal(Object.hasOwn(packedPackage.poiPlugin, 'apiVer'), false)
+  assert.equal(Object.hasOwn(packedPackage.poiPlugin, 'earliestCompatibleMain'), false)
+  assert.equal(Object.hasOwn(packedPackage.poiPlugin, 'lastApiVer'), false)
+
   const originalLoad = Module._load
   Module._load = function (request, parent, isMain) {
     if (request === 'react') return {}

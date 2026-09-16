@@ -18,6 +18,7 @@ const configPath = {
 const legacyConfigPath: Record<string, string> = {
   [configPath.enabled]: 'plugin.rich-presence.enabled',
   [configPath.clientId]: 'plugin.rich-presence.clientId',
+  [configPath.displayName]: 'plugin.rich-presence.displayName',
   [configPath.largeImage]: 'plugin.rich-presence.largeImage',
   [configPath.smallImage]: 'plugin.rich-presence.smallImage',
   [configPath.showMap]: 'plugin.rich-presence.showMap',
